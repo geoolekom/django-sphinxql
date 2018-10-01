@@ -88,3 +88,9 @@ class Index(metaclass=MetaIndex):
     def get_model_field(cls, model_attr):
         field, _, _, _ = cls.Meta.model._meta.get_field_by_name(model_attr)
         return field.get_attname_column()[1]
+
+    def get_pk(self):
+        """
+        Returns an attribute using as Django primary key.
+        """
+        return self.id if hasattr(self, 'id') else None

@@ -243,7 +243,7 @@ class SearchQuerySet(django.db.models.query.QuerySet):
             return self._result_cache
 
         # hit Sphinx: ordered results with index objects populated
-        indexes = OrderedDict([(index_obj.id, index_obj)
+        indexes = OrderedDict([(index_obj.get_pk(), index_obj)
                                for index_obj in
                                self._sphinx_queryset[:self.max_search_count]])
 
@@ -274,7 +274,7 @@ class SearchQuerySet(django.db.models.query.QuerySet):
         If `id_list` is None, hits Sphinx to retrieve it.
         """
         if id_list is None:
-            id_list = [index_obj.id for index_obj in
+            id_list = [index_obj.get_pk() for index_obj in
                        self._sphinx_queryset[:self.max_search_count]]
         clone = self._clone()
         clone = clone.filter(pk__in=id_list)
