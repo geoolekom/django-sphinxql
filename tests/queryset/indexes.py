@@ -1,6 +1,5 @@
 from django.db import connections
 
-from sphinxql.configuration.configurators import DJANGO_TO_SPHINX_VENDOR
 from sphinxql.manager import IndexManager
 from sphinxql import indexes, fields
 
@@ -30,7 +29,7 @@ class DocumentIndex(indexes.Index):
 
 vendor = connections['default'].vendor
 if vendor == 'postgresql':
-    sql_query = '''SELECT CAST(CAST(CONCAT('x', id) AS BIT(32)) AS INT) AS id, id AS uid, "text" FROM queryset_charprimarykeydocument'''
+    sql_query = '''SELECT ('x' || id)::BIT(32)::INT AS id, id AS uid, "text" FROM queryset_charprimarykeydocument'''
 elif vendor == 'mysql':
     sql_query = '''SELECT CONV(id, 16, 10) AS id, id AS uid, `text` FROM queryset_charprimarykeydocument'''
 
