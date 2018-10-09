@@ -1,14 +1,14 @@
 from setuptools import setup, find_packages
 
 setup(name='django-sphinxql',
-      version='1.1.0',
+      version='1.1.1',
       description='Sphinx search on Django',
       long_description=open('README.md').read(),
       author='Jorge C. Leitão',
       author_email='jorgecarleitao@gmail.com',
       packages=find_packages(),
       install_requires=['Django >= 1.8', 'pymysql'],
-      url='https://github.com/jorgecarleitao/django-sphinxql',
+      url='https://github.com/geoolekom/django-sphinxql',
       license='GPLv2',
       classifiers=[
           'Development Status :: 5 - Production/Stable',
