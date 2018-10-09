@@ -1,4 +1,5 @@
 import datetime
+from time import sleep
 from unittest import expectedFailure
 
 from sphinxql.core.base import Or
@@ -6,8 +7,8 @@ from sphinxql.exceptions import NotSupportedError
 from sphinxql.query import QuerySet
 from sphinxql.sql import C, Between
 
-from .indexes import DocumentIndex
-from .models import Document
+from .indexes import DocumentIndex, CharPrimaryKeyDocumentIndex
+from .models import Document, CharPrimaryKeyDocument
 
 from tests import SphinxQLTestCase
 
@@ -263,3 +264,26 @@ class LargeQuerySetTestCase(SphinxQLTestCase):
         django_query = self.documents.filter(number__gt=30)
 
         self.assertEqual(ids_set(sphinx_query), ids_set(django_query))
+
+
+class CharPrimaryKeyTestCase(SphinxQLTestCase):
+    def setUp(self):
+        super(CharPrimaryKeyTestCase, self).setUp()
+
+        for x in range(10):
+            CharPrimaryKeyDocument.objects.create(text="What a nice text{0}".format(x))
+
+        self.documents = CharPrimaryKeyDocument.objects.all()
+
+        self.index()
+
+    def test_pk_mapping(self):
+        django_obj = self.documents.filter(text__icontains='text5').first()
+        sphinx_qs = QuerySet(CharPrimaryKeyDocumentIndex).search('@text text5')
+        # sleep(1200)
+        self.assertEqual(len(sphinx_qs), 1)
+        sphinx_obj = sphinx_qs[0]
+
+        self.assertIsNotNone(django_obj)
+        self.assertIsNotNone(sphinx_obj)
+        self.assertEqual(django_obj.id, sphinx_obj.get_pk())
